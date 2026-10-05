@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
+import { formatRecord } from "@/lib/formatRecord";
 import { MockRecord } from "@/models/MockRecord";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
@@ -16,7 +17,7 @@ export async function GET(request, {params}){
         if(!record){
             return NextResponse.json({msg: "Not found"}, {status: 404})
         }
-        return NextResponse.json({record})
+        return NextResponse.json(formatRecord(record))
     }catch(error){
         return NextResponse.json({error: error.message}, {status: 500})
     }
@@ -36,7 +37,7 @@ export async function PUT(request, {params}){
         if(!updated){
             return NextResponse.json({msg: "Record not found"}, {status: 404})
         }
-        return NextResponse.json({updated})
+        return NextResponse.json(formatRecord(updated))
     }catch(error){
         return NextResponse.json({error: error.message}, {status: 500})
     }
@@ -55,7 +56,7 @@ export async function DELETE(request, {params}){
         if(!record){
             return NextResponse.json({msg: "Record Not found"}, {status: 404})
         }
-        return NextResponse.json({record})
+        return NextResponse.json(formatRecord(record))
     }catch(error){
         return NextResponse.json({error: error.message}, {status: 500})
     }
