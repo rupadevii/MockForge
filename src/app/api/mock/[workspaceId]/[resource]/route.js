@@ -3,6 +3,10 @@ import { formatRecord } from "@/lib/formatRecord";
 import { MockRecord } from "@/models/MockRecord";
 import { NextResponse } from "next/server";
 
+export async function OPTIONS() {
+    return new Response(null, { status: 204 });
+}
+
 export async function GET(request, {params}){
     const {workspaceId, resource} = await params
     try{

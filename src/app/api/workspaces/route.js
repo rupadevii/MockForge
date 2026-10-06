@@ -3,6 +3,10 @@ import { MockRecord } from "@/models/MockRecord";
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 
+export async function OPTIONS(){
+    return new Response(null, {status: 204})
+}
+
 export async function POST(request, {params}){
     try{
         await dbConnect()
