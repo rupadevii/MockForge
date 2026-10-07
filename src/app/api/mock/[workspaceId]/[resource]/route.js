@@ -8,10 +8,27 @@ export async function OPTIONS() {
 }
 
 export async function GET(request, {params}){
-    const {workspaceId, resource} = await params
     try{
+        const {workspaceId, resource} = await params
+        const {searchParams} = new URL(request.url)
+
+        const filter = { workspaceId, resource}
+        
+        for(const [key, value] of searchParams.entries()){
+            if(key.startsWith("_") || key.startsWith("$") || key.includes(".")) continue
+            
+            const list = [value]
+            if(value !== "" && !Number.isNaN(Number(value))){
+                list.push(Number(value))
+            }
+
+            if(value==="true" || value==="false") list.push(value==="true")
+
+            filter["data."+key] = { $in : list}
+        }
+
         await dbConnect()
-        const records = await MockRecord.find({workspaceId, resource})
+        const records = await MockRecord.find(filter)
         return NextResponse.json(records.map(formatRecord))
     }catch(error){
         return NextResponse.json({error: error.message}, {status: 500})
