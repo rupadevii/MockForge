@@ -13,6 +13,16 @@ export async function GET(request, {params}){
         const {searchParams} = new URL(request.url)
 
         const filter = { workspaceId, resource}
+
+        let sortOrder = {createdAt: 1}
+
+        const sort = searchParams.get("_sort")
+
+        const order = searchParams.get("_order")
+
+        if(sort && !sort.startsWith("$") && !sort.includes(".")){
+            sortOrder = {["data." + sort] : order==="desc" ? -1 : 1}
+        }
         
         for(const [key, value] of searchParams.entries()){
             if(key.startsWith("_") || key.startsWith("$") || key.includes(".")) continue
@@ -28,7 +38,8 @@ export async function GET(request, {params}){
         }
 
         await dbConnect()
-        const records = await MockRecord.find(filter)
+        const records = await MockRecord.find(filter).sort(sortOrder)
+
         return NextResponse.json(records.map(formatRecord))
     }catch(error){
         return NextResponse.json({error: error.message}, {status: 500})
