@@ -20,6 +20,14 @@ export async function GET(request, {params}){
 
         const order = searchParams.get("_order")
 
+        let page = parseInt(searchParams.get("_page"), 10)
+        let limit = parseInt(searchParams.get("_limit"), 10)
+
+        if(!page || page<1) page = 1
+        if(!limit || limit >100 || limit<1) limit = 100
+
+        const skip = (page-1) * limit
+
         if(sort && !sort.startsWith("$") && !sort.includes(".")){
             sortOrder = {["data." + sort] : order==="desc" ? -1 : 1}
         }
@@ -38,7 +46,7 @@ export async function GET(request, {params}){
         }
 
         await dbConnect()
-        const records = await MockRecord.find(filter).sort(sortOrder)
+        const records = await MockRecord.find(filter).sort({...sortOrder, _id: 1}).skip(skip).limit(limit)
 
         return NextResponse.json(records.map(formatRecord))
     }catch(error){
