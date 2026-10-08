@@ -56,6 +56,21 @@ export default function WorkspacePage(){
 
     const columns = ["id", ...new Set(records.flatMap((r) => Object.keys(r)).filter((item) => item !== "id"))]
 
+    async function handleDelete(id){
+        if(!window.confirm("Delete this record?")) return
+        try{
+            const res = await fetch(`/api/mock/${workspaceId}/${selected}/${id}`, {method: "DELETE"})
+            const data = await res.json()
+
+            if(!res.ok){
+                setError(data.error)
+            }
+            else setRecords(prev => prev.filter(item => item.id !== id))
+        }catch(err){
+            setError(err.message)
+        }
+    }
+
     return (
         <main className="min-h-screen bg-neutral-900 text-neutral-100 font-sans p-6 md:p-12">
             <div className="max-w-6xl mx-auto space-y-6">
@@ -108,6 +123,7 @@ export default function WorkspacePage(){
                                                         {col}
                                                     </th>
                                                 ))}
+                                                <th className="p-3 font-medium text-neutral-400 uppercase tracking-wider text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-neutral-800/60 font-mono">
@@ -118,6 +134,14 @@ export default function WorkspacePage(){
                                                             {display(record[col])}
                                                         </td>
                                                     ))}
+                                                    <td className="p-3 text-right">
+                                                        <button 
+                                                            onClick={() => handleDelete(record.id)}
+                                                            className="px-2.5 py-1 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-red-400 hover:text-red-300 border border-neutral-800 rounded-md text-xs font-sans transition-colors"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             )))}
                                         </tbody>

@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link';
 import { useState } from 'react'
 
 export default function Home() {
@@ -77,7 +78,7 @@ export default function Home() {
                 </form>
 
                 {result && (
-                    <div className="pt-6 border-t border-neutral-800 space-y-3">
+                    <div className="pt-6 border-t border-neutral-800 space-y-4">
                         <h2 className="text-xs font-medium text-neutral-400 uppercase tracking-wider">Endpoints</h2>
                         <ul className="space-y-2 font-mono text-xs">
                             {result.endpoints.map((endpoint) => (
@@ -86,6 +87,14 @@ export default function Home() {
                                 </li>
                             ))}
                         </ul>
+                        <div>
+                            <Link 
+                                href={`/workspace/${result.workspaceId}`}
+                                className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-200 text-sm font-medium rounded-md transition-colors"
+                            >
+                                Open Workspace →
+                            </Link>
+                        </div>
                     </div>
                 )}
             </div>
